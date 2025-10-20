@@ -1,0 +1,53 @@
+# .github/workflows/deploy.yml
+name: CI/CD Pipeline for Sentiment Model API
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r dev/api/requirements.txt # Fichier listant les dépendances (fastapi, torch, etc.)
+          pip install pytest # Pour les tests
+
+      - name: Run unit tests
+        run: pytest dev/api/tests/
+
+  # build-and-deploy:
+  #   needs: build-and-test # Ce job ne s'exécute que si les tests passent
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+        
+  #     # Étape de build de l'image Docker
+  #     - name: Build Docker image
+  #       run: docker build -t sentiment-api:latest ./api
+
+  #     # Étape de déploiement (exemple conceptuel)
+  #     # Dans un vrai cas on-premise, cette étape se connecterait à notre serveur
+  #     # via SSH pour y déployer la nouvelle image Docker.
+  #     - name: Deploy to Server
+  #       uses: appleboy/ssh-action@master
+  #       with:
+  #         host: ${{ secrets.SERVER_HOST }} # IP du serveur stockée dans les secrets GitHub
+  #         username: ${{ secrets.SERVER_USER }}
+  #         key: ${{ secrets.SSH_KEY }}
+  #         script: |
+  #           docker stop sentiment-container || true
+  #           docker rm sentiment-container || true
+  #           docker pull mon_registre/sentiment-api:latest # Simule la récupération d'une image
+  #           docker run -d --name sentiment-container -p 8000:8000 mon_registre/sentiment-api:latest
