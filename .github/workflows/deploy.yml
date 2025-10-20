@@ -24,7 +24,9 @@ jobs:
           pip install httpx pytest # Pour les tests
 
       - name: Run unit tests
-        run: pytest dev/api/tests/
+        run: |
+          export PYTHONPATH=$PYTHONPATH:./dev
+          pytest
 
   # build-and-deploy:
   #   needs: build-and-test # Ce job ne s'exécute que si les tests passent
