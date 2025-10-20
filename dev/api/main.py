@@ -1,6 +1,7 @@
 # main.py
 
 # --- 1. Imports ---
+from pathlib import Path
 from fastapi import FastAPI
 from pydantic import BaseModel
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
@@ -32,7 +33,9 @@ app = FastAPI(
 # --- 3. Chargement du modèle et du tokenizer (une seule fois au démarrage) ---
 # C'est une optimisation cruciale : le modèle est chargé en mémoire une seule fois
 # lorsque l'API démarre, et non à chaque requête.
-MODEL_DIR = "../sentiment_distilbert_model/"
+# Définir le chemin absolu
+BASE_DIR = Path(__file__).resolve().parent.parent
+MODEL_DIR = BASE_DIR / "sentiment_distilbert_model"
 
 print("Chargement du tokenizer...")
 tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR)
